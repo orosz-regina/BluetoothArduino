@@ -1,10 +1,9 @@
-// BluetoothScreen.tsx
 import React from 'react';
-import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, Alert } from 'react-native';
 import useBluetooth from '../hooks/useBluetooth';
 
 const BluetoothScreen = () => {
-  const { devices, scanning, startScan } = useBluetooth();
+  const { devices, scanning, startScan, connectToDevice, connectedDevice, connectionError } = useBluetooth();
 
   return (
     <View style={styles.container}>
@@ -19,8 +18,24 @@ const BluetoothScreen = () => {
             <View style={styles.device}>
               <Text>{item.name ? item.name : 'Unknown Device'}</Text>
               <Text>ID: {item.id}</Text>
+              <Button
+                title={`Connect to ${item.name}`}
+                onPress={() => connectToDevice(item.id)}
+              />
             </View>
           )}
+        />
+      )}
+      {connectedDevice && (
+        <Text style={styles.connected}>
+          Connected to: {connectedDevice.name}
+        </Text>
+      )}
+      {connectionError && (
+        <Alert
+          title="Connection Error"
+          message={connectionError}
+          onDismiss={() => {}}
         />
       )}
     </View>
@@ -31,6 +46,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
   noDevices: { textAlign: 'center', marginTop: 20, fontSize: 16, color: 'gray' },
   device: { padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' },
+  connected: { marginTop: 20, fontSize: 16, color: 'green' },
 });
 
 export default BluetoothScreen;
