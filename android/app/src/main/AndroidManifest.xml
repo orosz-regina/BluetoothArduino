@@ -4,14 +4,19 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.BLUETOOTH" />
-  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-  <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-  <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+  <!-- Bluetooth engedélyek Android 12 és újabb verziókhoz -->
+  <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
+  <!-- Régebbi Android verziókhoz -->
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
+  <!-- Helymeghatározás engedély (Android 10 és alatta szükséges) -->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+  <!-- Ha a háttérben is kell Bluetooth -->
+  <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>

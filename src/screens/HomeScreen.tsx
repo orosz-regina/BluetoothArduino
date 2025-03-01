@@ -8,7 +8,13 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Üdv a Bluetooth Appban!</Text>
+
+      {/* Bluetooth keresés gomb */}
       <Button title="Bluetooth eszközök keresése" onPress={() => navigation.navigate('BluetoothScreen')} />
+
+      {/* Arduino vezérlés gomb */}
+      <View style={styles.buttonSpacing} />
+      <Button title="Arduino vezérlés" onPress={() => navigation.navigate('ArduinoControl')} />
     </View>
   );
 };
@@ -22,6 +28,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginBottom: 20,
+  },
+  buttonSpacing: {
+    height: 20, // Távolság a két gomb között
   },
 });
 
