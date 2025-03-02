@@ -23,6 +23,7 @@ useEffect(() => {
     const BleManagerModule = NativeModules.BleManager;
     bleManagerEmitterRef.current = new NativeEventEmitter(BleManagerModule);
 
+    // Felfedezett eszközök figyelése
     const handleDiscoverPeripheral = (peripheral: any) => {
       if (peripheral.name) {
         setDevices((prevDevices) => {
@@ -34,14 +35,29 @@ useEffect(() => {
       }
     };
 
+    // Kapcsolódási események figyelése
+    const handleConnect = (peripheral: any) => {
+      console.log("Csatlakozotttttt eszköz:", peripheral);
+      setConnectedDevice({ id: peripheral.id, name: peripheral.name || "Unknown" });
+    };
+
+    const handleDisconnect = (peripheral: any) => {
+      console.log("Eszköz leválasztva:", peripheral);
+      setConnectedDevice(null);
+    };
+
     bleManagerEmitterRef.current.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
+    bleManagerEmitterRef.current.addListener('BleManagerConnectPeripheral', handleConnect);
+    bleManagerEmitterRef.current.addListener('BleManagerDisconnectPeripheral', handleDisconnect);
 
     return () => {
       if (bleManagerEmitterRef.current) {
         bleManagerEmitterRef.current.removeAllListeners('BleManagerDiscoverPeripheral');
+        bleManagerEmitterRef.current.removeAllListeners('BleManagerConnectPeripheral');
+        bleManagerEmitterRef.current.removeAllListeners('BleManagerDisconnectPeripheral');
       }
     };
-  }, []);
+  }, []); // Csak egyszer fusson le, amikor a komponens betöltődik
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -76,14 +92,14 @@ useEffect(() => {
 
     setDevices([]);
     setScanning(true);
-    BleManager.scan([], 30, true)
+    BleManager.scan([], 15, true)
       .then(() => console.log('Keresés elindult...'))
       .catch((error) => console.log('Hiba a keresésnél:', error));
 
     setTimeout(() => {
       setScanning(false);
       getDiscoveredDevices();
-    }, 30000);
+    }, 20000);
   };
 
   const getDiscoveredDevices = () => {
@@ -103,7 +119,6 @@ useEffect(() => {
       });
   };
 
-  // Csatlakozás eszközhöz
   const connectToDevice = async (deviceId: string) => {
     try {
       await BleManager.connect(deviceId);

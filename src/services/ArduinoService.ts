@@ -1,27 +1,29 @@
-import BleManager from "react-native-ble-manager";
-import { Alert } from "react-native";
+import BleManager from 'react-native-ble-manager';
+import { Buffer } from 'buffer';
 
-const ARDUINO_DEVICE_ID = "XX:XX:XX:XX:XX:XX"; // Az Arduino Bluetooth MAC-címe
-const SERVICE_UUID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"; // Szolgáltatás UUID
-const CHARACTERISTIC_UUID = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"; // Jellemző UUID
+// Konstans UUID-k
+const SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';  // Szolgáltatás UUID
+const CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';  // Jellemző UUID
 
-export const connectToDevice = async (): Promise<boolean> => {
+// Az üzenet küldése a kiválasztott Bluetooth eszközre
+export const sendMessageToDevice = async (deviceId, message) => {
 try {
-await BleManager.connect(ARDUINO_DEVICE_ID);
-    await BleManager.retrieveServices(ARDUINO_DEVICE_ID);
-    return true;
-  } catch (error) {
-    Alert.alert("Hiba", "Nem sikerült csatlakozni az Arduino-hoz.");
-    return false;
-  }
-};
+// Ellenőrizzük, hogy a Bluetooth eszköz csatlakozott-e
+await BleManager.connect(deviceId);
 
-export const sendMessageToDevice = async (message: string) => {
-  try {
-    const data = Buffer.from(message, "utf-8").toString("base64");
-    await BleManager.write(ARDUINO_DEVICE_ID, SERVICE_UUID, CHARACTERISTIC_UUID, data);
-    Alert.alert("Siker", "Üzenet elküldve az Arduino-nak.");
+    // Jellemzők regisztrálása (hogy biztosan elérhetők legyenek)
+    await BleManager.retrieveServices(deviceId);
+
+    // Az üzenet küldése a konstans UUID-kkel
+    await BleManager.write(
+      deviceId,            // Bluetooth eszköz ID
+      SERVICE_UUID,        // Szolgáltatás UUID (konstans)
+      CHARACTERISTIC_UUID, // Jellemző UUID (konstans)
+      Buffer.from(message, 'utf-8').toJSON().data // Az üzenet UTF-8 bájtokká alakítása
+    );
+    console.log("Message sent:", message); // Üzenet sikeres küldése
   } catch (error) {
-    Alert.alert("Hiba", "Nem sikerült üzenetet küldeni.");
+    console.error("Error sending message:", error); // Hiba esetén
+    throw new Error('Failed to send message');
   }
 };

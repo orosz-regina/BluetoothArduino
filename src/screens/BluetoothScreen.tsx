@@ -1,9 +1,26 @@
 import React from 'react';
 import { View, Text, FlatList, Button, StyleSheet, Alert } from 'react-native';
 import useBluetooth from '../hooks/useBluetooth';
+import { useNavigation } from '@react-navigation/native';
 
 const BluetoothScreen = () => {
-  const { devices, scanning, startScan, connectToDevice, connectedDevice, connectionError } = useBluetooth();
+  const navigation = useNavigation();
+  const { devices, scanning, startScan, connectToDevice, connectedDevice } = useBluetooth();
+
+  const handleConnectDevice = async (deviceId: string) => {
+    await connectToDevice(deviceId);
+
+    setTimeout(() => {
+      const updatedDevice = devices.find((d) => d.id === deviceId);
+      if (updatedDevice) {
+        console.log("Navigating with connectedDevice:", updatedDevice);
+        navigation.navigate('Home', { connectedDevice: updatedDevice });
+      } else {
+        Alert.alert('Connection failed', 'Failed to connect to the device.');
+      }
+    }, 1000); // Adjunk időt a frissítésre
+  };
+
 
   return (
     <View style={styles.container}>
@@ -16,11 +33,11 @@ const BluetoothScreen = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.device}>
-              <Text>{item.name ? item.name : 'Unknown Device'}</Text>
+              <Text>{item.name || 'Unknown Device'}</Text>
               <Text>ID: {item.id}</Text>
               <Button
-                title={`Connect to ${item.name}`}
-                onPress={() => connectToDevice(item.id)}
+                title={`Connect to ${item.name || 'Device'}`}
+                onPress={() => handleConnectDevice(item.id)}
               />
             </View>
           )}
@@ -28,15 +45,8 @@ const BluetoothScreen = () => {
       )}
       {connectedDevice && (
         <Text style={styles.connected}>
-          Connected to: {connectedDevice.name}
+          Connected to: {connectedDevice.name} (ID: {connectedDevice.id})
         </Text>
-      )}
-      {connectionError && (
-        <Alert
-          title="Connection Error"
-          message={connectionError}
-          onDismiss={() => {}}
-        />
       )}
     </View>
   );
