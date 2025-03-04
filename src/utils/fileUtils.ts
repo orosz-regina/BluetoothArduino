@@ -9,7 +9,8 @@ const config = require('../assets/config/layout.json');
 return config;
 } catch (error) {
 console.error('Error loading layout config:', error);
-    return { buttons: [] }; // Hibakezelés, ha nem sikerül betölteni a konfigurációt
+    return { buttons: [] };  // Hibakezelés, ha nem sikerül betölteni a konfigurációt
   }
 };
+
 

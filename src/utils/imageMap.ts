@@ -1,8 +1,10 @@
+import { Asset } from 'expo-asset';
+
 const imageMap: { [key: string]: any } = {
-left: require('../assets/images/left.png'),
-  right: require('../assets/images/right.png'),
-  forward: require('../assets/images/forward.png'),
-  default: require('../assets/images/default.png') // Alapértelmezett kép, ha nincs megadva
+left: Asset.fromModule(require('../assets/images/left.png')),
+  right: Asset.fromModule(require('../assets/images/right.png')),
+  forward: Asset.fromModule(require('../assets/images/forward.png')),
+  default: Asset.fromModule(require('../assets/images/default.png')),
 };
 
 export default imageMap;

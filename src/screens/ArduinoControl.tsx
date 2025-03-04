@@ -1,28 +1,32 @@
-// ArduinoControl.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import LayoutButton from '../components/LayoutButton';
 import { useRoute } from '@react-navigation/native';
 
 const ArduinoControl = () => {
   const route = useRoute();
-  const { connectedDevice } = route.params || {}; // Csatlakoztatott eszköz információja
+  const { connectedDevice } = route.params || {};
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Arduino Vezérlés</Text>
       {connectedDevice ? (
-        <LayoutButton deviceId={connectedDevice.id} /> // Ha van csatlakoztatott eszköz, a gombok megjelenítése
+        <LayoutButton deviceId={connectedDevice.id} />
       ) : (
-        <Text style={styles.error}>Nincs csatlakoztatott eszköz</Text> // Ha nincs csatlakoztatott eszköz
+        <View style={styles.errorContainer}>
+          <Text style={styles.error}>Nincs csatlakoztatott eszköz</Text>
+        </View>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 20, marginBottom: 20 },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center' },  // Gombok felül
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   error: { color: 'red', fontSize: 16 },
 });
 

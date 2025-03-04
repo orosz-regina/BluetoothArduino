@@ -1,39 +1,48 @@
-// CustomButton.tsx
 import React from 'react';
-import { TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Image, Text, StyleSheet, View } from 'react-native';
 
 interface CustomButtonProps {
-  title: string;
-  imageSource: any;
+  imageSource?: any;
   onPress: () => void;
+  label?: string;
+  style?: object;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ title, imageSource, onPress }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({ imageSource, onPress, label, style }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      {imageSource && <Image source={imageSource} style={styles.icon} />}
-      <Text style={styles.text}>{title}</Text>
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+      {imageSource ? (
+        <Image source={imageSource} style={styles.icon} />
+      ) : (
+        <View style={styles.background}>
+          <Text style={styles.label}>{label}</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
+    justifyContent: 'center',
+    margin: 15, // Nagyobb térköz
+  },
+  background: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
   },
   icon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+    width: 50,
+    height: 50,
   },
-  text: {
-    color: '#fff',
-    fontSize: 16,
+  label: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
