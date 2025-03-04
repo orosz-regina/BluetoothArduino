@@ -1,0 +1,7 @@
+{
+  "buttons": [
+    { "title": "Balra", "command": "LEFT", "image": "left.png" },
+    { "title": "Jobbra", "command": "RIGHT", "image": "right.png" },
+    { "title": "Elorre", "command": "FORWARD", "image": "forward.png" }
+  ]
+}

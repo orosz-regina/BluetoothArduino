@@ -99,7 +99,7 @@ useEffect(() => {
     setTimeout(() => {
       setScanning(false);
       getDiscoveredDevices();
-    }, 20000);
+    }, 10000);
   };
 
   const getDiscoveredDevices = () => {
