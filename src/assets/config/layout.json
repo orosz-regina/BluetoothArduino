@@ -4,6 +4,6 @@
     { "title": "Jobbra", "command": "RIGHT", "image": "right"},
     { "title": "Előre", "command": "FORWARD", "image": "forward" },
     { "title": "Stop", "command": "STOP"},
-    { "title": "test", "command": "test", "image": "asd" }
+    { "title": "test", "command": "test", "width": 150, "height": 50 }
   ]
 }

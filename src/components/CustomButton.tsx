@@ -1,21 +1,23 @@
 import React from 'react';
-import { TouchableOpacity, Image, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Image, StyleSheet, Text, View } from 'react-native';
 
 interface CustomButtonProps {
-  imageSource?: any;
-  onPress: () => void;
-  label?: string;
-  style?: object;
+  imageSource?: any; // Kép forrása (opcionális)
+  onPress: () => void; // A gombra kattintás eseménye
+  label?: string; // Ha nincs kép, a szöveg jelenik meg
+  width?: number;
+  height?: number;
+  style?: object; // Egyedi pozicionálás
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ imageSource, onPress, label, style }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({ imageSource, onPress, label, width = 50, height = 50, style }) => {
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
       {imageSource ? (
-        <Image source={imageSource} style={styles.icon} />
+        <Image source={imageSource} style={[styles.icon, { width, height }]} />
       ) : (
-        <View style={styles.background}>
-          <Text style={styles.label}>{label}</Text>
+        <View style={[styles.textButton, { width, height }]}>
+          <Text style={styles.text}>{label}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -26,23 +28,22 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 15, // Nagyobb térköz
-  },
-  background: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
+    margin: 10, // Alap térköz a gombok között
   },
   icon: {
-    width: 50,
-    height: 50,
+    resizeMode: 'contain', // Képméret beállítása
   },
-  label: {
+  textButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2, // Körvonal vastagság
+    borderColor: 'black', // Körvonal színe
+    borderRadius: 10, // Lekerekített sarkok
+  },
+  text: {
     fontSize: 14,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
