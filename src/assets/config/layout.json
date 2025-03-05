@@ -1,9 +1,13 @@
 {
   "buttons": [
     { "title": "Balra", "command": "LEFT", "image": "left" },
-    { "title": "Jobbra", "command": "RIGHT", "image": "right"},
+    { "title": "Jobbra", "command": "RIGHT", "image": "right" },
     { "title": "Előre", "command": "FORWARD", "image": "forward" },
-    { "title": "Stop", "command": "STOP"},
+    { "title": "Stop", "command": "STOP" },
     { "title": "test", "command": "test", "width": 150, "height": 50 }
-  ]
+  ],
+  "textInput": {
+    "label": "Send Text",
+
+  }
 }

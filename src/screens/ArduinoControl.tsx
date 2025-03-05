@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import LayoutButton from '../components/LayoutButton';
+import LayoutButton from '../components/LayoutComponent';
 import { useRoute } from '@react-navigation/native';
 
 const ArduinoControl = () => {

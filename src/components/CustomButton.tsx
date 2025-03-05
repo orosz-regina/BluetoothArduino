@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     margin: 10, // Alap térköz a gombok között
   },
   icon: {
-    resizeMode: 'contain', // Képméret beállítása
+    resizeMode: 'contain', // Kép méretezése
   },
   textButton: {
     justifyContent: 'center',
