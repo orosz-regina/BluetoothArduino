@@ -132,6 +132,23 @@ useEffect(() => {
     }
   };
 
+  const sendMessage = async (message: string) => {
+    try {
+      // A Bluetooth kommunikáció küldése itt történik.
+      console.log('Üzenet küldése:', message);
+      // Adjunk hozzá egy példát a Bluetooth üzenet küldésére
+      await BleManager.write(
+        connectedDevice.id,
+        '0000fff0-0000-1000-8000-00805f9b34fb', // A szolgáltatás UUID-ja
+        '0000fff1-0000-1000-8000-00805f9b34fb', // A jellemző UUID-ja
+        [message]
+      );
+      console.log('Üzenet sikeresen elküldve:', message);
+    } catch (error) {
+      console.log('Hiba történt az üzenet küldésénél:', error);
+    }
+  };
+
   return {
     devices,
     scanning,
@@ -139,6 +156,7 @@ useEffect(() => {
     connectionError,
     startScan,
     connectToDevice,
+    sendMessage,  // Üzenet küldése
   };
 };
 

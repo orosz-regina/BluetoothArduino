@@ -5,25 +5,77 @@ import { Buffer } from 'buffer';
 const SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';  // Szolgáltatás UUID
 const CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';  // Jellemző UUID
 
-// Az üzenet küldése a kiválasztott Bluetooth eszközre
-export const sendMessageToDevice = async (deviceId, message) => {
+// Üzenet küldése az eszközre
+export const sendMessageToDevice = async (deviceId: string, message: string) => {
 try {
-// Ellenőrizzük, hogy a Bluetooth eszköz csatlakozott-e
-await BleManager.connect(deviceId);
+console.log('Küldés előtt próbálkozás:', deviceId);
 
-    // Jellemzők regisztrálása (hogy biztosan elérhetők legyenek)
+    // Csatlakozunk a Bluetooth eszközhöz
+    await BleManager.connect(deviceId);
+    console.log('Csatlakozva:', deviceId);
+
+    // Szolgáltatások és jellemzők lekérése
     await BleManager.retrieveServices(deviceId);
+    console.log('Szolgáltatások lekérése sikeres');
 
-    // Az üzenet küldése a konstans UUID-kkel
+    // Az üzenet küldése a jellemzőre
     await BleManager.write(
-      deviceId,            // Bluetooth eszköz ID
-      SERVICE_UUID,        // Szolgáltatás UUID (konstans)
-      CHARACTERISTIC_UUID, // Jellemző UUID (konstans)
-      Buffer.from(message, 'utf-8').toJSON().data // Az üzenet UTF-8 bájtokká alakítása
+      deviceId,               // Bluetooth eszköz ID
+      SERVICE_UUID,           // Szolgáltatás UUID
+      CHARACTERISTIC_UUID,    // Jellemző UUID
+      Buffer.from(message, 'utf-8').toJSON().data  // Az üzenet bájtokká alakítása
     );
-    console.log("Message sent:", message); // Üzenet sikeres küldése
+    console.log('Üzenet sikeresen elküldve:', message);
+
   } catch (error) {
-    console.error("Error sending message:", error); // Hiba esetén
+    console.error("Hiba üzenet küldésekor:", error);
     throw new Error('Failed to send message');
+  }
+};
+
+// Üzenet fogadás beállítása
+export const startReceivingMessages = async (deviceId: string) => {
+  try {
+    console.log('Csatlakozunk az eszközhöz:', deviceId);
+    await BleManager.connect(deviceId);
+    console.log('Csatlakozva:', deviceId);
+
+    // Szolgáltatások és jellemzők lekérése
+    await BleManager.retrieveServices(deviceId);
+    console.log('Szolgáltatások lekérése sikeres');
+
+    // Értesítés beállítása a jellemzőn
+    await BleManager.startNotification(deviceId, SERVICE_UUID, CHARACTERISTIC_UUID);
+    console.log('Értesítés sikeresen beállítva');
+
+    // Beérkező adatok figyelése
+    BleManager.on('BleManagerDidUpdateValueForCharacteristic', (data) => {
+      console.log('Beérkezett adat:', data);
+
+      // Ellenőrizzük, hogy a helyes eszköztől és jellemzőtől érkezett adat
+      if (data.peripheral === deviceId && data.characteristic === CHARACTERISTIC_UUID) {
+        const receivedMessage = Buffer.from(data.value).toString('utf-8');
+        console.log('Bejövő üzenet:', receivedMessage);
+
+        // Az üzenet feldolgozása
+        // Például itt beállíthatjuk a UI-ban a megfelelő üzenetet
+      } else {
+        console.log('Az üzenet nem a várt jellemzőből érkezett');
+      }
+    });
+  } catch (error) {
+    console.error('Hiba üzenet fogadásakor:', error);
+    throw new Error('Failed to start receiving messages');
+  }
+};
+
+// Eszköz leválasztása
+export const disconnectDevice = async (deviceId: string) => {
+  try {
+    await BleManager.disconnect(deviceId);
+    console.log('Eszközhöz való kapcsolat bontása:', deviceId);
+  } catch (error) {
+    console.error("Hiba kapcsolat bontásakor:", error);
+    throw new Error('Failed to disconnect from device');
   }
 };

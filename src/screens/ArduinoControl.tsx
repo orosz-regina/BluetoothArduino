@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import LayoutButton from '../components/LayoutComponent';
 import { useRoute } from '@react-navigation/native';
 
