@@ -1,11 +1,14 @@
 {
   "buttons": [
-    { "title": "Balra", "command": "LEFT", "image": "left" },
-    { "title": "Jobbra", "command": "RIGHT", "image": "right" },
-    { "title": "Előre", "command": "FORWARD", "image": "forward" },
-    { "title": "Stop", "command": "STOP" },
-    { "title": "Üzenet küld", "command": "szia", "width": 150, "height": 50 },
-    {"title": "Buzi Maci","command": "Nincs es nem is volt"}
+    { "title": "1", "command": "1" },
+    { "title": "2", "command": "2" },
+    { "title": "3", "command": "3" },
+    { "title": "4", "command": "4" },
+    { "title": "5", "command": "5" },
+    { "title": "Balra", "command": "LEFT", "image": "left", "marginLeft": 60, "marginTop": 70 },
+    { "title": "Előre", "command": "FORWARD", "image": "forward", "marginLeft": 125,"marginTop": 1 },
+    { "title": "Jobbra", "command": "RIGHT", "image": "right", "marginLeft": 200, "marginTop": 70 },
+      { "title": "Stop", "command": "STOP", "width": 150, "height": 50,"marginLeft": 80, "marginTop": 130}
   ],
   "textInput": {
     "label": "Send Text",
