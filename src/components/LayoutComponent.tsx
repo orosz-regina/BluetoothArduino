@@ -34,8 +34,12 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
   const fixedButtons = buttons.filter((btn) => btn.marginLeft || btn.marginTop);
 
   // Kiszámoljuk a fix gombokhoz szükséges maximális magasságot és szélességet
-  const fixedBoxHeight = Math.max(...fixedButtons.map((btn) => (btn.marginTop || 0) + (btn.height || 50)));
-  const fixedBoxWidth = Math.max(...fixedButtons.map((btn) => (btn.marginLeft || 0) + (btn.width || 50)));
+  const fixedBoxHeight = fixedButtons.length > 0
+    ? Math.max(...fixedButtons.map((btn) => (btn.marginTop || 0) + (btn.height || 50)))
+    : 0; // Alapértelmezett érték, ha nincsenek fix gombok
+  const fixedBoxWidth = fixedButtons.length > 0
+    ? Math.max(...fixedButtons.map((btn) => (btn.marginLeft || 0) + (btn.width || 50)))
+    : 0; // Alapértelmezett érték, ha nincsenek fix gombok
 
   return (
     <View style={styles.container}>
