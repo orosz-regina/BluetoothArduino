@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { Buffer } from 'buffer';
@@ -13,33 +13,38 @@ interface MessageDisplayProps {
 }
 
 const MessageDisplay: React.FC<MessageDisplayProps> = ({ config, deviceId }) => {
-  const [receivedMessage, setReceivedMessage] = useState('Várakozás...');
+  const [receivedMessage, setReceivedMessage] = useState('');
   const [connected, setConnected] = useState(false);
   const SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   const CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  const { width, height, backgroundColor = '#f0f0f0' } = config;
-  const screenWidth = Dimensions.get('window').width;
-  const containerWidth = width || screenWidth - 40;
+  // Alapértelmezett konfiguráció
+  const containerStyle = {
+    width: config.width || '100%',
+    height: config.height || 100, // Beállíthatod, ha szeretnéd limitálni
+    backgroundColor: config.backgroundColor || '#ddd',
+    borderRadius: config.borderRadius || 10,
+    borderColor: config.borderColor || '#000',
+    justifyContent: config.justifyContent || 'center',
+    alignItems: config.alignItems || 'left',
+    position: config.position || 'relative',
+    top: config.top || undefined,
+    left: config.left || undefined,
+    ...config.input,
+  };
+
+  const textStyle = {
+    color: config.textColor || '#000',  // Szöveg színe (default: piros)
+    fontSize: config.fontSize || 18, // Alapértelmezett fontSize 18, ha nincs megadva
+  };
 
   useEffect(() => {
     const initializeBluetooth = async () => {
       try {
         await BleManager.start({ showAlert: false });
-        console.log('Bluetooth inicializálva.');
-
-        // Kapcsolódunk az eszközhöz
         await BleManager.connect(deviceId);
-        console.log('Csatlakozva:', deviceId);
-
-        // Szolgáltatások lekérése
         await BleManager.retrieveServices(deviceId);
-        console.log('Szolgáltatások lekérése sikeres');
-
-        // Értesítések beállítása
         await BleManager.startNotification(deviceId, SERVICE_UUID, CHARACTERISTIC_UUID);
-        console.log('Értesítés beállítva a jellemzőhöz!');
-
         setConnected(true);
       } catch (error) {
         console.error('Bluetooth kapcsolódás hiba:', error);
@@ -47,51 +52,48 @@ const MessageDisplay: React.FC<MessageDisplayProps> = ({ config, deviceId }) => 
       }
     };
 
-    // Bluetooth események figyelése
     const handleUpdateValueForCharacteristic = (data: any) => {
       const receivedData = Buffer.from(data.value).toString('utf-8');
-      console.log('Bejövő üzenet:', receivedData);
-      setReceivedMessage(receivedData);
+
+      // Azonnali logolás a kapott adat előtt
+
+      // Mivel minden új üzenetnél törölni akarjuk az előzőt,
+      // az előző üzenet törléséhez az üzenetet egy üres stringre állítjuk
+      setReceivedMessage(receivedData);  // Csak az új adatot tároljuk
     };
 
-    // Az eseményfigyelő regisztrálása
     const eventListener = bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic);
-
-    // Az inicializálás végrehajtása
     initializeBluetooth();
 
-    // Cleanup: eltávolítjuk az eseményfigyelőt és leállítjuk az értesítést
     return () => {
       if (connected) {
-        BleManager.stopNotification(deviceId, SERVICE_UUID, CHARACTERISTIC_UUID)
-          .then(() => console.log('Bluetooth értesítés leállítva!'))
-          .catch((error) => console.error('Bluetooth értesítés leállítása hiba:', error));
+        BleManager.stopNotification(deviceId, SERVICE_UUID, CHARACTERISTIC_UUID);
       }
-
-      // Eseményfigyelő eltávolítása a helyes módon
       eventListener.remove();
     };
   }, [deviceId, connected]);
 
   return (
-    <View style={[styles.container, { width: containerWidth, height, backgroundColor }]}>
-      <Text style={styles.messageText}>{receivedMessage}</Text>
+    <View style={[styles.container, containerStyle]}>
+      {/* A ScrollView vízszintes görgetést biztosít */}
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={true}>
+        <Text style={[styles.messageText, textStyle]}>
+          {receivedMessage}
+        </Text>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 10,
-    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    marginTop: 30,
+    overflow: 'hidden', // Biztosítja, hogy a konténer ne törjön meg
   },
   messageText: {
-    fontSize: 18,
-    color: '#333',
+    flexShrink: 0,  // Ne zsugorodjon a szöveg
   },
 });
 

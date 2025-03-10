@@ -8,19 +8,29 @@ const BluetoothScreen = () => {
   const { devices, scanning, startScan, connectToDevice, connectedDevice } = useBluetooth();
 
   const handleConnectDevice = async (deviceId: string) => {
-    await connectToDevice(deviceId);
+    try {
+      // Ellenőrzés, hogy a csatlakozás sikeres volt
+      const success = await connectToDevice(deviceId);
 
-    setTimeout(() => {
-      const updatedDevice = devices.find((d) => d.id === deviceId);
-      if (updatedDevice) {
-        console.log("Navigating with connectedDevice:", updatedDevice);
-        navigation.navigate('Home', { connectedDevice: updatedDevice });
+      if (success) {
+        console.log("Eszközhöz való csatlakozás sikeres!");
+
+        // Megkeressük az eszközt az eszközök listájában
+        const updatedDevice = devices.find((d) => d.id === deviceId);
+        if (updatedDevice) {
+          console.log("Navigálunk a Home képernyőre:", updatedDevice);
+          navigation.navigate('Home', { connectedDevice: updatedDevice });
+        } else {
+          Alert.alert('Connection failed', 'Failed to connect to the device.');
+        }
       } else {
         Alert.alert('Connection failed', 'Failed to connect to the device.');
       }
-    }, 1000); // Adjunk időt a frissítésre
+    } catch (error) {
+      console.error('Connection error:', error);
+      Alert.alert('Connection error', 'An error occurred while connecting.');
+    }
   };
-
 
   return (
     <View style={styles.container}>
@@ -33,8 +43,9 @@ const BluetoothScreen = () => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.device}>
-              <Text>{item.name || 'Unknown Device'}</Text>
+              <Text>{item.name ? item.name : 'Unknown Device'}</Text>
               <Text>ID: {item.id}</Text>
+              {/* A kommentet most kívül helyezzük */}
               <Button
                 title={`Connect to ${item.name || 'Device'}`}
                 onPress={() => handleConnectDevice(item.id)}

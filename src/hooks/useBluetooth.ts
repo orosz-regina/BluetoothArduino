@@ -23,7 +23,6 @@ useEffect(() => {
     const BleManagerModule = NativeModules.BleManager;
     bleManagerEmitterRef.current = new NativeEventEmitter(BleManagerModule);
 
-    // Felfedezett eszközök figyelése
     const handleDiscoverPeripheral = (peripheral: any) => {
       if (peripheral.name) {
         setDevices((prevDevices) => {
@@ -35,7 +34,6 @@ useEffect(() => {
       }
     };
 
-    // Kapcsolódási események figyelése
     const handleConnect = (peripheral: any) => {
       console.log("Csatlakozotttttt eszköz:", peripheral);
       setConnectedDevice({ id: peripheral.id, name: peripheral.name || "Unknown" });
@@ -121,31 +119,20 @@ useEffect(() => {
 
   const connectToDevice = async (deviceId: string) => {
     try {
+      console.log('Connecting to device:', deviceId);  // Debugging log
       await BleManager.connect(deviceId);
       const device = devices.find((d) => d.id === deviceId);
-      setConnectedDevice(device || null);
-      setConnectionError(null);
-      console.log(`Csatlakoztatott eszköz: ${device?.name}`);
+      if (device) {
+        setConnectedDevice(device);
+        console.log("Device connected:", device);  // Debugging log
+        return true;
+      } else {
+        console.log("Device not found after connection attempt");
+        return false;
+      }
     } catch (error) {
-      setConnectionError('Nem sikerült csatlakozni az eszközhöz');
-      console.log('Connection error:', error);
-    }
-  };
-
-  const sendMessage = async (message: string) => {
-    try {
-      // A Bluetooth kommunikáció küldése itt történik.
-      console.log('Üzenet küldése:', message);
-      // Adjunk hozzá egy példát a Bluetooth üzenet küldésére
-      await BleManager.write(
-        connectedDevice.id,
-        '0000fff0-0000-1000-8000-00805f9b34fb', // A szolgáltatás UUID-ja
-        '0000fff1-0000-1000-8000-00805f9b34fb', // A jellemző UUID-ja
-        [message]
-      );
-      console.log('Üzenet sikeresen elküldve:', message);
-    } catch (error) {
-      console.log('Hiba történt az üzenet küldésénél:', error);
+      console.error('Connection error:', error);
+      return false;
     }
   };
 
@@ -156,7 +143,6 @@ useEffect(() => {
     connectionError,
     startScan,
     connectToDevice,
-    sendMessage,  // Üzenet küldése
   };
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import CustomButton from './CustomButton';
 import TextInputButton from './TextInputButton';
 import MessageDisplay from './MessageDisplay';
@@ -112,23 +112,23 @@ const styles = StyleSheet.create({
     flexDirection: 'column',  // Vertikális elrendezés
     paddingTop: 20,
     paddingHorizontal: 20,
+    width: '100%', // A konténer szélessége most már 100%-os
   },
   dynamicBox: {
-    flexDirection: 'row', // A dinamikus gombok vízszintesen
-    flexWrap: 'wrap', // Ha nincs hely, új sorba kerülnek
-    marginBottom: 20, // Térköz a dinamikus gombok és a fix gombok között
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 20,
+    width: '100%', // A dinamikus gombok is 100%-ra vannak állítva
   },
   fixedBoxContainer: {
-    position: 'relative', // A konténer relatív pozícióban van
-    marginBottom: 20, // Térköz a fix gombok és a többi elem között
+    position: 'relative',
+    marginBottom: 20,
+    width: '100%', // A fix gombok konténere is kitölti a szélességet
   },
   fixedBox: {
-    position: 'absolute', // A fix gombok abszolút pozícióban vannak
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    pointerEvents: 'box-none', // A gombok interaktívak maradnak
+    position: 'relative',
+    width: '100%',
+    height: '100%',
   },
 });
 

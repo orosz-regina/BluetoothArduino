@@ -8,27 +8,14 @@
     { "title": "Balra", "command": "LEFT", "image": "left", "marginLeft": 70, "marginTop": 70 },
     { "title": "Előre", "command": "FORWARD", "image": "forward", "marginLeft": 135,"marginTop": 1 },
     { "title": "Jobbra", "command": "RIGHT", "image": "right", "marginLeft": 200, "marginTop": 70 },
-      { "title": "Stop", "command": "STOP", "width": 150, "height": 50,"marginLeft": 90, "marginTop": 130}
+      { "title": "Stop", "command": "STOP", "width": 200, "height": 50,"marginLeft": 60, "marginTop": 150}
   ],
   "textInput": {
-    "label": "Send Text",
+    "label": "Üzenet küldése",
     "placeholder": "Írj be egy üzenetet...",
-    "width": "80%",
-    "height": 50,
-    "borderColor": "#000",
-    "borderWidth": 1,
-    "borderRadius": 5
+    "width": "70%"
   },
   "messageBox": {
     "label": "Received Message",
-    "width": "80%",
-    "height": 100,
-    "backgroundColor": "#ddd",
-    "borderRadius": 10,
-    "justifyContent": "center",
-    "alignItems": "center",
-    "position": "absolute",
-    "top": 150,
-    "left": "10%"
   }
 }
