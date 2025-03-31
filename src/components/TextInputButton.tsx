@@ -3,61 +3,56 @@ import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-nativ
 import { sendMessageToDevice } from '../services/ArduinoService';
 
 interface TextInputButtonProps {
-  config: any;
-  deviceId: string;
+  config: any;  // A konfigurációs objektum, amely a stílusokat és egyéb beállításokat tartalmaz
+  deviceId: string;  // Az eszköz azonosítója
 }
 
 const TextInputButton: React.FC<TextInputButtonProps> = ({ config, deviceId }) => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState('');  // A felhasználó által beírt szöveg
 
+  // Dinamikus stílusok a bemeneti mezőhöz (alapértelmezett stílusok a második kódból)
   const inputStyle = {
     width: config.width || '100%',
     height: config.height || 50,
-    padding: 10,
-    marginBottom: 10,
-    textAlign: 'left',
     borderColor: config.borderColor || '#000',
-    borderWidth: config.borderWidth || 1,
-    borderRadius: config.borderRadius || 5,
+    borderWidth: 1,
+    borderRadius: config.borderRadius || 10,
     backgroundColor: config.backgroundColor || '#ddd',
-    color: config.textColor || '#000',
+    paddingLeft: 10,
+    paddingRight: 10,
     ...config.input,
   };
 
+  // Dinamikus stílusok a gombhoz (alapértelmezett gombstílusok a második kódból)
   const buttonStyle = {
     backgroundColor: config.buttonBackgroundColor || '#007bff',
-    padding: config.buttonPadding || 10,
     borderRadius: config.buttonBorderRadius || 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
     ...config.button,
   };
 
-  const buttonTextStyle = {
-    color: config.buttonTextColor || '#fff',
-    fontSize: config.buttonTextSize || 16,
-    textAlign: 'center',
-  };
-
+  // Az üzenet küldése
   const handleSendText = () => {
     if (text.trim() !== '') {
-      sendMessageToDevice(deviceId, text);
-      setText('');
+      sendMessageToDevice(deviceId, text);  // Küldje el a szöveget az eszközhöz
+      setText('');  // Törölje a szöveget a mezőből
     }
   };
 
   return (
     <View style={styles.container}>
+      {/* Bemeneti mező */}
       <TextInput
         style={inputStyle}
         value={text}
         onChangeText={setText}
         placeholder={config.placeholder || 'Írj be egy üzenetet...'}
       />
-      <TouchableOpacity
-        style={buttonStyle}
-        onPress={handleSendText}
-      >
-        {/* A szövegek mindig Text komponensben */}
-        <Text style={buttonTextStyle}>{config.label || 'Küldés'}</Text>
+      {/* Gomb a szöveg küldésére */}
+      <TouchableOpacity style={buttonStyle} onPress={handleSendText}>
+        <Text style={styles.buttonText}>{config.label || 'Küldés'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -67,8 +62,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-    marginVertical: 10,
     marginTop: 30,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

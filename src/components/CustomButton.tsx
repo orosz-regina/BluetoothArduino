@@ -5,8 +5,8 @@ interface CustomButtonProps {
   imageSource?: any; // Kép forrása (opcionális)
   onPress: () => void; // A gombra kattintás eseménye
   label?: string; // Ha nincs kép, a szöveg jelenik meg
-  width?: number;
-  height?: number;
+  width?: number; // Gomb szélessége
+  height?: number; // Gomb magassága
   style?: object; // Egyedi pozicionálás
 }
 
@@ -14,8 +14,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({ imageSource, onPress, label
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
       {imageSource ? (
+        // Ha van kép forrás, megjelenítjük azt
         <Image source={imageSource} style={[styles.icon, { width, height }]} />
       ) : (
+        // Ha nincs kép, akkor egy szöveges gombot jelenítünk meg
         <View style={[styles.textButton, { width, height }]}>
           <Text style={styles.text}>{label}</Text>
         </View>
@@ -28,17 +30,17 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 10, // Alap térköz a gombok között
+    margin: 10,
   },
   icon: {
-    resizeMode: 'contain', // Kép méretezése
+    resizeMode: 'contain',
   },
   textButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2, // Körvonal vastagság
-    borderColor: 'black', // Körvonal színe
-    borderRadius: 10, // Lekerekített sarkok
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
   },
   text: {
     fontSize: 14,

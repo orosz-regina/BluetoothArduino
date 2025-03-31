@@ -21,7 +21,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = ({ config, deviceId }) => 
   // Alapértelmezett konfiguráció
   const containerStyle = {
     width: config.width || '100%',
-    height: config.height || 100, // Beállíthatod, ha szeretnéd limitálni
+    height: config.height || 100,
     backgroundColor: config.backgroundColor || '#ddd',
     borderRadius: config.borderRadius || 10,
     borderColor: config.borderColor || '#000',
@@ -34,7 +34,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = ({ config, deviceId }) => 
   };
 
   const textStyle = {
-    color: config.textColor || '#000',  // Szöveg színe (default: piros)
+    color: config.textColor || '#000',  // Szöveg színe
     fontSize: config.fontSize || 18, // Alapértelmezett fontSize 18, ha nincs megadva
   };
 

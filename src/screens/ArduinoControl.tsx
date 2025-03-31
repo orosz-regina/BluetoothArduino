@@ -5,15 +5,16 @@ import { useRoute } from '@react-navigation/native';
 
 const ArduinoControl = () => {
   const route = useRoute();
-  const { connectedDevice } = route.params || {}; // Ellenőrizd, hogy van-e csatlakoztatott eszköz
+  const { connectedDevice } = route.params || {}; // Csak akkor használjuk, ha van csatlakoztatott eszköz
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Ha csatlakoztatott eszköz van, megjelenítjük a vezérlőt */}
       {connectedDevice ? (
         <LayoutButton deviceId={connectedDevice.id} />
       ) : (
         <View style={styles.errorContainer}>
-          {/* A szöveges tartalmat mindig <Text> komponensbe kell ágyazni */}
+          {/* Ha nincs csatlakoztatott eszköz, hibaüzenet jelenik meg */}
           <Text style={styles.error}>Nincs csatlakoztatott eszköz</Text>
         </View>
       )}
@@ -23,19 +24,19 @@ const ArduinoControl = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // A konténer rugalmasan kitölti a képernyőt
+    flexGrow: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingBottom: 20, // A görgetéshez szükséges extra hely
+    paddingBottom: 20,
   },
   errorContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,  // Néhány szépítési mód
+    marginTop: 20,
   },
   error: {
     color: 'red',
-    fontSize: 16
+    fontSize: 16,
   },
 });
 

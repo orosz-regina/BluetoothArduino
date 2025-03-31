@@ -8,29 +8,27 @@ const CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';  // Jellemz�
 // Üzenet küldése az eszközre
 export const sendMessageToDevice = async (deviceId: string, message: string) => {
 try {
-console.log('Küldés előtt próbálkozás:', deviceId);
-
-    // Ellenőrzés: biztosan van-e ilyen eszköz
-    const devices = await BleManager.getDiscoveredPeripherals();
-    const deviceExists = devices.some(device => device.id === deviceId);
-    if (!deviceExists) {
+// Ellenőrizzük, hogy az eszköz létezik-e
+const devices = await BleManager.getDiscoveredPeripherals();
+const deviceExists = devices.some(device => device.id === deviceId);
+if (!deviceExists) {
       console.log('Eszköz nem található:', deviceId);
       throw new Error('Invalid peripheral uuid');
     }
 
-    // Csatlakozunk a Bluetooth eszközhöz
+    // Csatlakozunk az eszközhöz
     await BleManager.connect(deviceId);
     console.log('Csatlakozva:', deviceId);
 
     // Szolgáltatások és jellemzők lekérése
-    const services = await BleManager.retrieveServices(deviceId);
+    await BleManager.retrieveServices(deviceId);
 
-    // Az üzenet küldése a jellemzőre
+    // Az üzenet elküldése
     await BleManager.write(
-      deviceId,               // Bluetooth eszköz ID
+      deviceId,               // Eszköz ID
       SERVICE_UUID,           // Szolgáltatás UUID
       CHARACTERISTIC_UUID,    // Jellemző UUID
-      Buffer.from(message, 'utf-8').toJSON().data  // Az üzenet bájtokká alakítása
+      Buffer.from(message, 'utf-8').toJSON().data  // Üzenet bájtokká alakítása
     );
     console.log('Üzenet sikeresen elküldve:', message);
 
@@ -40,12 +38,10 @@ console.log('Küldés előtt próbálkozás:', deviceId);
   }
 };
 
-// Üzenet fogadás beállítása
+// Üzenet fogadása
 export const startReceivingMessages = async (deviceId: string) => {
   try {
-    console.log('Csatlakozunk az eszközhöz:', deviceId);
-
-    // Ellenőrzés: biztosan van-e ilyen eszköz
+    // Ellenőrizzük, hogy az eszköz létezik-e
     const devices = await BleManager.getDiscoveredPeripherals();
     const deviceExists = devices.some(device => device.id === deviceId);
     if (!deviceExists) {
@@ -53,6 +49,7 @@ export const startReceivingMessages = async (deviceId: string) => {
       throw new Error('Invalid peripheral uuid');
     }
 
+    // Csatlakozás az eszközhöz
     await BleManager.connect(deviceId);
     console.log('Csatlakozva:', deviceId);
 
@@ -60,21 +57,19 @@ export const startReceivingMessages = async (deviceId: string) => {
     await BleManager.retrieveServices(deviceId);
     console.log('Szolgáltatások lekérése sikeres');
 
-    // Értesítés beállítása a jellemzőn
+    // Értesítés beállítása
     await BleManager.startNotification(deviceId, SERVICE_UUID, CHARACTERISTIC_UUID);
     console.log('Értesítés sikeresen beállítva');
 
-    // Beérkező adatok figyelése
+    // Beérkező üzenetek figyelése
     BleManager.on('BleManagerDidUpdateValueForCharacteristic', (data) => {
       console.log('Beérkezett adat:', data);
 
-      // Ellenőrizzük, hogy a helyes eszköztől és jellemzőtől érkezett adat
+      // Ellenőrizzük, hogy a várt eszköztől érkezik-e adat
       if (data.peripheral === deviceId && data.characteristic === CHARACTERISTIC_UUID) {
         const receivedMessage = Buffer.from(data.value).toString('utf-8');
         console.log('Bejövő üzenet:', receivedMessage);
-
-        // Az üzenet feldolgozása
-        // Például itt beállíthatjuk a UI-ban a megfelelő üzenetet
+        // Üzenet feldolgozása
       } else {
         console.log('Az üzenet nem a várt jellemzőből érkezett');
       }

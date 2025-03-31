@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CustomButton from './CustomButton';
 import TextInputButton from './TextInputButton';
 import MessageDisplay from './MessageDisplay';
 import { sendMessageToDevice } from '../services/ArduinoService';
 import imageMap from '../utils/imageMap';
+import { loadLayoutConfig } from '../utils/fileUtils';
 
 interface LayoutComponentProps {
   deviceId: string;
@@ -17,33 +18,29 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
 
   useEffect(() => {
     const loadConfig = async () => {
-      try {
-        const config = require('../assets/config/layout.json');
-        setButtons(config.buttons);
-        setTextInputConfig(config.textInput || null);
-        setMessageBoxConfig(config.messageBox || null);
-      } catch (error) {
-        console.error('Error loading layout config:', error);
-      }
+      const config = await loadLayoutConfig(); // A fileUtils.ts fájlból olvasunk
+      setButtons(config.buttons);
+      setTextInputConfig(config.textInput || null);
+      setMessageBoxConfig(config.messageBox || null);
     };
     loadConfig();
   }, []);
 
-  // Különválasztjuk a dinamikus és fix pozíciós gombokat
+  // Dinamikus gombok és fix gombok szétválasztása
   const dynamicButtons = buttons.filter((btn) => !btn.marginLeft && !btn.marginTop);
   const fixedButtons = buttons.filter((btn) => btn.marginLeft || btn.marginTop);
 
-  // Kiszámoljuk a fix gombokhoz szükséges maximális magasságot és szélességet
+  // Fix gombok maximális méretének kiszámítása
   const fixedBoxHeight = fixedButtons.length > 0
     ? Math.max(...fixedButtons.map((btn) => (btn.marginTop || 0) + (btn.height || 50)))
-    : 0; // Alapértelmezett érték, ha nincsenek fix gombok
+    : 0;
   const fixedBoxWidth = fixedButtons.length > 0
     ? Math.max(...fixedButtons.map((btn) => (btn.marginLeft || 0) + (btn.width || 50)))
-    : 0; // Alapértelmezett érték, ha nincsenek fix gombok
+    : 0;
 
   return (
     <View style={styles.container}>
-      {/* Dinamikus gombok (számozott gombok) */}
+      {/* Dinamikus gombok megjelenítése */}
       <View style={styles.dynamicBox}>
         {dynamicButtons.map((btn, index) => {
           const imageKey = btn.image || '';
@@ -64,7 +61,7 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
         })}
       </View>
 
-      {/* Fix gombok konténere (marginnal rendelkező gombok) */}
+      {/* Fix gombok konténere */}
       <View style={[styles.fixedBoxContainer, { height: fixedBoxHeight, width: fixedBoxWidth }]}>
         <View style={styles.fixedBox}>
           {fixedButtons.map((btn, index) => {
@@ -73,9 +70,9 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
             const width = btn.width || 50;
             const height = btn.height || 50;
 
-            // A marginok alkalmazása
+            // Pozíció beállítása fix gombokhoz
             const buttonStyle = {
-              position: 'absolute', // Fix pozíció
+              position: 'absolute',
               left: btn.marginLeft || 0,
               top: btn.marginTop || 0,
             };
@@ -95,7 +92,7 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
         </View>
       </View>
 
-      {/* Text input és message box */}
+      {/* Text input és message box megjelenítése */}
       {textInputConfig && (
         <TextInputButton config={textInputConfig} deviceId={deviceId} />
       )}
@@ -109,21 +106,21 @@ const LayoutComponent: React.FC<LayoutComponentProps> = ({ deviceId }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column',  // Vertikális elrendezés
+    flexDirection: 'column',
     paddingTop: 20,
     paddingHorizontal: 20,
-    width: '100%', // A konténer szélessége most már 100%-os
+    width: '100%',
   },
   dynamicBox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 20,
-    width: '100%', // A dinamikus gombok is 100%-ra vannak állítva
+    width: '100%',
   },
   fixedBoxContainer: {
     position: 'relative',
     marginBottom: 20,
-    width: '100%', // A fix gombok konténere is kitölti a szélességet
+    width: '100%',
   },
   fixedBox: {
     position: 'relative',

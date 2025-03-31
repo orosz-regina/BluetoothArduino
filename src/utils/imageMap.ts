@@ -1,5 +1,6 @@
 import { Asset } from 'expo-asset';
 
+// Kép források térképe az irányokhoz
 const imageMap: { [key: string]: any } = {
 left: Asset.fromModule(require('../assets/images/left.png')),
   right: Asset.fromModule(require('../assets/images/right.png')),

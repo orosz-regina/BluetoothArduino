@@ -16,6 +16,7 @@ const [connectionError, setConnectionError] = useState<string | null>(null);
 const bleManagerEmitterRef = useRef<any>(null);
 
 useEffect(() => {
+    // BLE Manager inicializálása
     BleManager.start({ showAlert: false })
       .then(() => console.log('BLE Manager started'))
       .catch((error) => console.log('BLE Manager start error:', error));
@@ -23,6 +24,7 @@ useEffect(() => {
     const BleManagerModule = NativeModules.BleManager;
     bleManagerEmitterRef.current = new NativeEventEmitter(BleManagerModule);
 
+    // Bluetooth eszközök felfedezése
     const handleDiscoverPeripheral = (peripheral: any) => {
       if (peripheral.name) {
         setDevices((prevDevices) => {
@@ -34,29 +36,34 @@ useEffect(() => {
       }
     };
 
+    // Eszköz csatlakozása
     const handleConnect = (peripheral: any) => {
-      console.log("Csatlakozotttttt eszköz:", peripheral);
+      console.log("Csatlakozott eszköz:", peripheral);
       setConnectedDevice({ id: peripheral.id, name: peripheral.name || "Unknown" });
     };
 
+    // Eszköz leválasztása
     const handleDisconnect = (peripheral: any) => {
       console.log("Eszköz leválasztva:", peripheral);
       setConnectedDevice(null);
     };
 
+    // Eseménykezelők hozzáadása
     bleManagerEmitterRef.current.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
     bleManagerEmitterRef.current.addListener('BleManagerConnectPeripheral', handleConnect);
     bleManagerEmitterRef.current.addListener('BleManagerDisconnectPeripheral', handleDisconnect);
 
     return () => {
+      // Események törlése a komponens eltávolításakor
       if (bleManagerEmitterRef.current) {
         bleManagerEmitterRef.current.removeAllListeners('BleManagerDiscoverPeripheral');
         bleManagerEmitterRef.current.removeAllListeners('BleManagerConnectPeripheral');
         bleManagerEmitterRef.current.removeAllListeners('BleManagerDisconnectPeripheral');
       }
     };
-  }, []); // Csak egyszer fusson le, amikor a komponens betöltődik
+  }, []); // Eltérítetlenül egyszer lefut, amikor a komponens betöltődik
 
+  // Engedélyek kérése Androidon
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -83,6 +90,7 @@ useEffect(() => {
     return true;
   };
 
+  // Bluetooth keresés elindítása
   const startScan = async () => {
     if (scanning) return;
     const hasPermission = await requestPermissions();
@@ -100,6 +108,7 @@ useEffect(() => {
     }, 10000);
   };
 
+  // Felfedezett eszközök listájának lekérése
   const getDiscoveredDevices = () => {
     BleManager.getDiscoveredPeripherals()
       .then((peripherals) => {
@@ -117,6 +126,7 @@ useEffect(() => {
       });
   };
 
+  // Csatlakozás egy eszközhöz
   const connectToDevice = async (deviceId: string) => {
     try {
       console.log('Connecting to device:', deviceId);  // Debugging log
