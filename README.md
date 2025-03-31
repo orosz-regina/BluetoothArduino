@@ -67,3 +67,7 @@ A fejlesztés során a következő parancsokat használhatod:
 ```sh
 npx expo build:android    # Android alkalmazás futtatása
 ```
+
+## App linkje
+
+https://drive.google.com/file/d/1cexhJw9O0c6UT7tGL-CFcAYsnjMjtqze/view?usp=sharing
